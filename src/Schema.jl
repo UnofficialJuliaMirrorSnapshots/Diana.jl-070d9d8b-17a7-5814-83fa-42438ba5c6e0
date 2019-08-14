@@ -1,26 +1,30 @@
+using JSON
 
-
-type schema
+mutable struct schema
   execute::Function
+  tbn
 end
 
+function Schema(_schema::String, resolvers)
+simbolos =getfield_types()
+vi= Visitante(Parse(_schema))
+vi.visitante(simbolos)
 
-
-function Schema(_schema)
-
-my_schema = _schema
-	
     function execute(query::String)
-      ast=""
-      try                           
-         ast= Parse(str)
-     catch e                       
-        s=string(e.msg) 
-        m=match(r"(?<line>\d+)[\s]*,?[\s]*(\w)+[\s]*(?<col>\d+)",s)              
-        return "{\"errors\": [{\"message\": \"Syntax Error GraphQL request $s\",\"locations\": [{\"column\": $(m["col"]),\"line\": $(m["line"])}]}]}"
-      end
+      myquery = Parse(query)
+      Validatequery(myquery)
+      return JSON.json(ExecuteQuery(myquery, resolvers, simbolos))
+      #=Validatequery(Parse(query))
+      validatelosdos()
+      operationName = GetOperation(document, operationName)
+     function ExecuteRequest(schema, document, operationName, variableValues, initialValue)
+
+      return ExecuteQuery(operation, schema, coercedVariableValues, initialValue)
+      return ExecuteMutation(operation, schema, coercedVariableValues, initialValue).
+      return Subscribe(operation, schema, coercedVariableValues, initialValue).
+     end=#
     end
 
- return schema(execute) 
+ return schema(execute,simbolos)
 
 end

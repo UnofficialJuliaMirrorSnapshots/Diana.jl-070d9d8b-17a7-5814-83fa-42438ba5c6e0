@@ -1,18 +1,20 @@
- __precompile__()
-
 module Diana
+abstract type Rule end
 
-include("Client.jl")
+struct GraphQLError <:Exception
+    msg::String
+end
+
+tabla_simbolos = Dict()
+
+include("client.jl")
 include("token.jl")
 include("lexer.jl")
-include("parser.jl")
+include("Parser.jl")
+include("Validate.jl")
 include("Schema.jl")
+include("execute.jl")
 
-import .Lexers: Tokenize,Tokensgraphql
+export Queryclient, GraphQLClient,Tokensgraphql,Parse,Schema,Validatequery
 
-export Query, GraphQLClient, Schema, Tokenize,Tokensgraphql, Parse
-
-
-include("_precompile.jl")
-_precompile_()
 end # module
