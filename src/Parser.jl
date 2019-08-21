@@ -64,22 +64,22 @@ struct FragmentDefinition <:Node
 end
 struct IntValue <:Node
 	kind::String
-	value
+	value::Int64
 	IntValue(v)=new("IntValue",v)
 end
 struct FloatValue <:Node
 	kind::String
-	value
+	value::Float64
 	FloatValue(v)=new("FloatValue",v)
 end
 struct StringValue <:Node
 	kind::String
-	value
+	value::String
 	StringValue(v)=new("StringValue",v)
 end
 struct BooleanValue <:Node
 	kind::String
-	value
+	value::Bool
 	BooleanValue(v)=new("BooleanValue",v)
 end
 struct NullValue <:Node
@@ -344,10 +344,12 @@ function many(lexer::Lexer, openKind, parseFn::Function, closeKind)
  	return nodes
  end
 """
-Given a GraphQL source, parses it into a Document.
+    Parse(str::String)
+
+Given a GraphQL source, parses it into a AST.
 Throws Diana.GraphQLError if a syntax error is encountered.
  """
-function Parse(str)
+function Parse(str::String)
 	return parseDocument(Lexer(str))
 end
 
@@ -499,7 +501,7 @@ end
 """
 function parseName(lexer::Lexer)
   token = expect(lexer, Tokens.NAME)
-  return Name(token.val#=,loc(lexer, token)=#)
+  return Name(token.val)
 end
 
 """
@@ -686,30 +688,30 @@ function parseValueLiteral(lexer::Lexer, isConst::Bool)
 
     if(token.kind==Tokens.INT)
       lexer.advance()
-      return IntValue(token.val#=,loc(lexer, token)=#)
+      return IntValue(token.val)
     end
 
     if(token.kind==Tokens.FLOAT)
       lexer.advance()
-      return FloatValue(token.val#=,loc(lexer, token)=#)
+      return FloatValue(token.val)
     end
 
     if(token.kind==Tokens.STRING)
       lexer.advance()
-      return StringValue(token.val#=,loc(lexer, token)=#)
+      return StringValue(token.val)
     end
 
     if(token.kind==Tokens.NAME)
       if((token.val == "true" )| (token.val == "false"))
         lexer.advance()
-        return BooleanValue(token.val == "true"#=,loc(lexer, token)=#)
+        return BooleanValue(token.val == "true")
       elseif(token.val == "null")
         lexer.advance()
         return NullValue(#=loc(lexer, token)=#)
       end
 
       lexer.advance()
-      return EnumValue(token.val#=,loc(lexer, token)=#)
+      return EnumValue(token.val)
     end
 
     if(token.kind==Tokens.DOLLAR)
